@@ -3,11 +3,38 @@ layout: default
 title: Summary report
 nav_order: 40
 parent: Reference
+redirect_from:
+  - /benchmark/user-guide/understanding-results/
+  - /benchmark/user-guide/understanding-results/summary-reports/
 ---
 
 # Summary report
 
-At the end of each run, OpenSearch Benchmark shows a summary report based on the metric keys defined in the workload. This page gives details on each line of the summary report and that line's associated metric key.
+At the end of each test run, OpenSearch Benchmark creates a summary of test result metrics like service time, throughput, latency, and more. These metrics provide insights into how the selected workload performed on a benchmarked OpenSearch cluster.
+
+This page gives details on each line of the summary report and that line's associated metric key.
+
+## Interpreting the report
+
+Metrics that are unique to the cluster begin at the `index` task line. The following are examples of metrics that might be relevant to you:
+
+- To assess how much load your cluster can handle, the `index` task metrics provide the number of documents ingested during the workload run as well as the ingestion error rate.
+- To assess the measurable latency and service time of the queries in the workload, the `match_all` and `term` tasks provide the number of query operations performed per second, the measurable query latency, and the query operation error rate.
+
+## Storing results
+
+OpenSearch Benchmark results are stored in-memory or in external storage.
+
+When stored in-memory, results can be found in the `/.benchmark/benchmarks/test-runs/<test_run_id>` directory. Results are named in accordance with the `test_run_id` of the most recent workload test.
+
+While [running a test]({{site.url}}{{site.baseurl}}/benchmark/reference/commands/run/#general-settings), you can customize where the results are stored using any combination of the following command flags:
+
+* `--results-file`: When provided a file path, writes the summary report to the file indicated in the path.
+* `--results-format`: Defines the output format for the summary report results, either `markdown` or `csv`. Default is `markdown`.
+* `--show-in-results`: Defines which values are shown in the published summary report, either `available`, `all-percentiles`, or `all`. Default is `available`.
+* `--user-tag`: Defines user-specific key-value pairs used in the metrics record as meta information, for example, `intention:baseline-ticket-12345`. This is useful when storing metrics and results in external storage.
+
+## Metric key reference
 
 ## Cumulative indexing time of primary shards
 
