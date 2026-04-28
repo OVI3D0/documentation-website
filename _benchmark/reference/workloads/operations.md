@@ -1,16 +1,16 @@
 ---
 layout: default
-title: operations
+title: Operations
 parent: Workload reference
-grand_parent: OpenSearch Benchmark Reference
+grand_parent: Reference
 nav_order: 100
+redirect_from:
+  - /benchmark/user-guide/understanding-workloads/common-operations/
 ---
 
-<!-- vale off -->
-# operations
-<!-- vale on -->
+# Operations
 
-The `operations` element contains a list of all available operations for specifying a schedule.
+[Test procedures]({{site.url}}{{site.baseurl}}/benchmark/user-guide/understanding-workloads/anatomy-of-a-workload#_operations-and-_test-procedures) use a variety of operations, found inside the `operations` directory of a workload. The `operations` element contains a list of all available operations for specifying a schedule.
 
 <!-- vale off -->
 ## bulk

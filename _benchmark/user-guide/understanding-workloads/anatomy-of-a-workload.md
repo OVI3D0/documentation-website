@@ -270,7 +270,7 @@ The `files.txt` file lists the files that store the workload data, which are typ
 
 ## _operations and _test-procedures
 
-To make the workload more human-readable, `_operations` and `_test-procedures` are separated into two directories. 
+To make the workload more human-readable, `_operations` and `_test-procedures` are separated into two directories. For a complete list of supported operations and their configuration options, see the [Operations reference]({{site.url}}{{site.baseurl}}/benchmark/reference/workloads/operations/). For details on how to pass parameters to workloads, see [Workload parameters]({{site.url}}{{site.baseurl}}/benchmark/reference/workloads/parameters/).
 
 The `_operations` directory contains a `default.json` file that lists all of the supported operations that the test procedure can use. Some workloads, such as `nyc_taxis`, contain an additional `.json` file that lists feature-specific operations, such as `snapshot` operations. The following JSON example shows a list of operations from the `nyc_taxis` workload:
 
