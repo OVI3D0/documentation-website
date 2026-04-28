@@ -3,7 +3,9 @@ layout: default
 title: Choosing a workload
 nav_order: 20
 grand_parent: User guide
-parent: Understanding workloads
+redirect_from:
+  - /benchmark/user-guide/understanding-workloads/choosing-a-workload/
+parent: Workloads
 ---
 
 # Choosing a workload

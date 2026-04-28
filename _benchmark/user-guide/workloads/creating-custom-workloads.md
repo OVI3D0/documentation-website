@@ -3,11 +3,9 @@ layout: default
 title: Creating custom workloads
 nav_order: 10
 grand_parent: User guide
-parent: Working with workloads
 redirect_from:
-  - /benchmark/user-guide/creating-custom-workloads/
-  - /benchmark/creating-custom-workloads/
-  - /benchmark/user-guide/creating-osb-workloads/
+  - /benchmark/user-guide/working-with-workloads/creating-custom-workloads/
+parent: Workloads
 ---
 
 # Creating custom workloads

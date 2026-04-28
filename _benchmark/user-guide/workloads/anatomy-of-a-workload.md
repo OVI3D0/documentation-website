@@ -3,7 +3,9 @@ layout: default
 title: Anatomy of a workload
 nav_order: 15
 grand_parent: User guide
-parent: Understanding workloads
+redirect_from:
+  - /benchmark/user-guide/understanding-workloads/anatomy-of-a-workload/
+parent: Workloads
 ---
 
 # Anatomy of a workload
