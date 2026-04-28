@@ -336,3 +336,785 @@ If `detailed-results` is set to `true`, the following metadata is also returned:
  - `took`: The value of the `took` property in the query response. For scroll queries, the value is the sum of all `took` values in all query responses.
 
 
+
+<!-- vale off -->
+## force-merge
+<!-- vale on -->
+
+The `force-merge` operation runs the [Force Merge API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/force-merge/).
+
+### Usage
+
+```json
+{
+  "name": "force-merge",
+  "operation-type": "force-merge",
+  "index": "_all",
+  "request-params": {
+    "max_num_segments": 1
+  }
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | No | String | The index or indexes to force merge. Default is `_all`.
+`request-params` | No | Object | Request parameters passed to the Force Merge API, such as `max_num_segments`.
+`mode` | No | String | Set to `polling` to wait asynchronously for the merge to complete.
+
+This is an administrative operation. Metrics are not reported by default. Reporting can be forced by setting `include-in-reporting` to `true`.
+
+<!-- vale off -->
+## index-stats
+<!-- vale on -->
+
+The `index-stats` operation runs the [Index Stats API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/stats/).
+
+### Usage
+
+```json
+{
+  "name": "index-stats",
+  "operation-type": "index-stats",
+  "index": "_all",
+  "condition": {
+    "path": "_all.total.merges.current",
+    "expected-value": 0
+  },
+  "retry-until-success": true
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | No | String | The index or indexes to retrieve statistics for. Default is `_all`.
+`condition` | No | Object | A condition to check in the response. Contains `path` (dot-notation path in the response) and `expected-value`.
+`request-params` | No | Object | Request parameters passed to the Stats API.
+
+<!-- vale off -->
+## node-stats
+<!-- vale on -->
+
+The `node-stats` operation runs the [Nodes Stats API]({{site.url}}{{site.baseurl}}/api-reference/nodes-apis/nodes-stats/).
+
+### Usage
+
+```json
+{
+  "name": "node-stats",
+  "operation-type": "node-stats"
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`request-params` | No | Object | Request parameters passed to the Nodes Stats API.
+
+<!-- vale off -->
+## vector-search
+<!-- vale on -->
+
+The `vector-search` operation runs k-NN vector search queries and optionally computes recall metrics by comparing results against ground truth neighbors.
+
+### Usage
+
+```json
+{
+  "name": "knn-search",
+  "operation-type": "vector-search",
+  "index": "vectors",
+  "k": 100,
+  "body": {
+    "query": {
+      "knn": {
+        "embedding": {
+          "vector": [0.1, 0.2, 0.3],
+          "k": 100
+        }
+      }
+    }
+  }
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | No | String | The target index.
+`body` | Yes | Object | The search request body containing the k-NN query.
+`k` | No | Integer | The number of nearest neighbors to retrieve. Used for recall calculation.
+`detailed-results` | No | Boolean | Records detailed metadata.
+`calculate-recall` | No | Boolean | Whether to compute recall@k and recall@1 against ground truth neighbors. Default is `true`.
+`neighbors` | No | Array | Ground truth neighbor IDs for recall calculation. Typically provided by the workload's param source.
+
+### Metadata
+
+- `weight`: Always `1`.
+- `unit`: Always `ops`.
+- `success`: Whether the search succeeded.
+- `recall@k`: Recall at k (if ground truth neighbors are provided).
+- `recall@1`: Recall at 1 (if ground truth neighbors are provided).
+
+<!-- vale off -->
+## bulk-vector-data-set
+<!-- vale on -->
+
+The `bulk-vector-data-set` operation bulk-indexes vector data from HDF5 or BigANN dataset files. Supports individual document retry on partial failures.
+
+### Usage
+
+```json
+{
+  "name": "bulk-vectors",
+  "operation-type": "bulk-vector-data-set",
+  "bulk-size": 500,
+  "index": "vectors"
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`bulk-size` | No | Integer | Number of documents per bulk request.
+`index` | No | String | The target index.
+`retries` | No | Integer | Number of retry attempts on failure. Default is `3`.
+`retry-wait-period` | No | Number | Initial wait period between retries in seconds. Default is `0.5`.
+`retry-max-wait-period` | No | Number | Maximum wait period between retries in seconds (exponential backoff capped at this value). Default is `60`.
+`detailed-results` | No | Boolean | Records detailed per-document success/failure metadata.
+
+<!-- vale off -->
+## put-pipeline
+<!-- vale on -->
+
+The `put-pipeline` operation creates or updates an [ingest pipeline]({{site.url}}{{site.baseurl}}/ingest-pipelines/).
+
+### Usage
+
+```json
+{
+  "name": "define-pipeline",
+  "operation-type": "put-pipeline",
+  "id": "my-pipeline",
+  "body": {
+    "description": "My ingest pipeline",
+    "processors": [
+      {
+        "set": {
+          "field": "ingest_time",
+          "value": "{{_ingest.timestamp}}"
+        }
+      }
+    ]
+  }
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`id` | Yes | String | The pipeline ID.
+`body` | Yes | Object | The pipeline definition.
+
+This is an administrative operation. Metrics are not reported by default.
+
+<!-- vale off -->
+## delete-pipeline
+<!-- vale on -->
+
+The `delete-pipeline` operation deletes an ingest pipeline.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`id` | Yes | String | The pipeline ID to delete.
+
+This is an administrative operation. Metrics are not reported by default.
+
+<!-- vale off -->
+## create-search-pipeline
+<!-- vale on -->
+
+The `create-search-pipeline` operation creates a [search pipeline]({{site.url}}{{site.baseurl}}/search-plugins/search-pipelines/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`id` | Yes | String | The search pipeline ID.
+`body` | Yes | Object | The search pipeline definition.
+
+This is an administrative operation. Metrics are not reported by default.
+
+<!-- vale off -->
+## put-settings
+<!-- vale on -->
+
+The `put-settings` operation updates [cluster settings]({{site.url}}{{site.baseurl}}/api-reference/cluster-api/cluster-settings/).
+
+### Usage
+
+```json
+{
+  "name": "increase-watermarks",
+  "operation-type": "put-settings",
+  "body": {
+    "transient": {
+      "cluster.routing.allocation.disk.watermark.low": "95%"
+    }
+  }
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`body` | Yes | Object | The cluster settings to apply.
+
+This is an administrative operation. Metrics are not reported by default.
+
+<!-- vale off -->
+## create-data-stream
+<!-- vale on -->
+
+The `create-data-stream` operation creates a [data stream]({{site.url}}{{site.baseurl}}/opensearch/data-streams/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`data-stream` | Yes | String | The data stream name.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## delete-data-stream
+<!-- vale on -->
+
+The `delete-data-stream` operation deletes a data stream.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`data-stream` | Yes | String | The data stream name.
+`only-if-exists` | No | Boolean | Only delete if the data stream exists. Default is `true`.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## create-composable-template
+<!-- vale on -->
+
+The `create-composable-template` operation creates a [composable index template]({{site.url}}{{site.baseurl}}/im-plugin/index-templates/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The template name.
+`body` | Yes | Object | The template definition.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## delete-composable-template
+<!-- vale on -->
+
+The `delete-composable-template` operation deletes a composable index template.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The template name.
+`only-if-exists` | No | Boolean | Only delete if the template exists. Default is `true`.
+`delete-matching-indices` | No | Boolean | Also delete indices matching the template pattern. Default is `false`.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## create-component-template
+<!-- vale on -->
+
+The `create-component-template` operation creates a [component template]({{site.url}}{{site.baseurl}}/im-plugin/index-templates/#component-templates).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The component template name.
+`body` | Yes | Object | The component template definition.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## delete-component-template
+<!-- vale on -->
+
+The `delete-component-template` operation deletes a component template.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The component template name.
+`only-if-exists` | No | Boolean | Only delete if the template exists. Default is `true`.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## create-index-template
+<!-- vale on -->
+
+The `create-index-template` operation creates a legacy index template.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The template name.
+`body` | Yes | Object | The template definition.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## delete-index-template
+<!-- vale on -->
+
+The `delete-index-template` operation deletes a legacy index template.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`template` | Yes | String | The template name.
+`only-if-exists` | No | Boolean | Only delete if the template exists. Default is `true`.
+`delete-matching-indices` | No | Boolean | Also delete indices matching the template pattern. Default is `false`.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## shrink-index
+<!-- vale on -->
+
+The `shrink-index` operation uses the [Shrink Index API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/shrink-index/) to reduce the number of primary shards in an index.
+
+### Usage
+
+```json
+{
+  "name": "shrink-index",
+  "operation-type": "shrink-index",
+  "source-index": "my-index",
+  "target-index": "my-index-shrunk",
+  "target-body": {
+    "settings": {
+      "index.number_of_shards": 1,
+      "index.codec": "best_compression"
+    }
+  }
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`source-index` | Yes | String | The source index to shrink.
+`target-index` | Yes | String | The name for the shrunk index.
+`target-body` | No | Object | Settings and mappings for the target index.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## create-snapshot-repository
+<!-- vale on -->
+
+The `create-snapshot-repository` operation creates a [snapshot repository]({{site.url}}{{site.baseurl}}/opensearch/snapshots/snapshot-restore/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`repository` | Yes | String | The repository name.
+`body` | Yes | Object | The repository definition (type, settings).
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## delete-snapshot-repository
+<!-- vale on -->
+
+The `delete-snapshot-repository` operation deletes a snapshot repository.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`repository` | Yes | String | The repository name to delete.
+
+<!-- vale off -->
+## create-snapshot
+<!-- vale on -->
+
+The `create-snapshot` operation creates a [snapshot]({{site.url}}{{site.baseurl}}/opensearch/snapshots/snapshot-restore/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`repository` | Yes | String | The repository name.
+`snapshot` | Yes | String | The snapshot name.
+`body` | No | Object | The snapshot definition.
+`wait-for-completion` | No | Boolean | Whether to wait for the snapshot to complete. Default is `true`.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## wait-for-snapshot-create
+<!-- vale on -->
+
+The `wait-for-snapshot-create` operation polls the snapshot status until it completes.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`repository` | Yes | String | The repository name.
+`snapshot` | Yes | String | The snapshot name.
+
+<!-- vale off -->
+## restore-snapshot
+<!-- vale on -->
+
+The `restore-snapshot` operation restores a snapshot.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`repository` | Yes | String | The repository name.
+`snapshot` | Yes | String | The snapshot name.
+`body` | No | Object | The restore request body.
+`request-params` | No | Object | Additional request parameters.
+
+<!-- vale off -->
+## wait-for-recovery
+<!-- vale on -->
+
+The `wait-for-recovery` operation waits until index recovery completes by polling the [Index Recovery API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/recovery/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | No | String | The index to monitor recovery for. Default is `_all`.
+`request-params` | No | Object | Additional request parameters.
+`retry-until-success` | No | Boolean | Whether to keep retrying until recovery completes. Default is `false`.
+
+<!-- vale off -->
+## submit-async-search
+<!-- vale on -->
+
+The `submit-async-search` operation submits an [asynchronous search]({{site.url}}{{site.baseurl}}/search-plugins/async-search/) request.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | No | String | The target index.
+`body` | Yes | Object | The search request body.
+`request-params` | No | Object | Additional request parameters.
+`cache` | No | Boolean | Whether to cache results.
+
+<!-- vale off -->
+## get-async-search
+<!-- vale on -->
+
+The `get-async-search` operation retrieves the results of a previously submitted async search.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`retrieve-results-for` | Yes | String | The name of the `submit-async-search` operation to retrieve results for.
+
+<!-- vale off -->
+## delete-async-search
+<!-- vale on -->
+
+The `delete-async-search` operation deletes an async search result.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`retrieve-results-for` | Yes | String | The name of the `submit-async-search` operation whose results to delete.
+
+<!-- vale off -->
+## create-point-in-time
+<!-- vale on -->
+
+The `create-point-in-time` operation creates a [Point in Time (PIT)]({{site.url}}{{site.baseurl}}/search-plugins/point-in-time/) for an index.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`index` | Yes | String | The target index.
+`keep-alive` | No | String | How long to keep the PIT alive (e.g., `5m`).
+
+<!-- vale off -->
+## delete-point-in-time
+<!-- vale on -->
+
+The `delete-point-in-time` operation deletes a PIT.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`pit-id` | No | String | The PIT ID to delete. If not specified, uses the ID from the most recent `create-point-in-time` operation.
+
+<!-- vale off -->
+## list-all-point-in-time
+<!-- vale on -->
+
+The `list-all-point-in-time` operation lists all active PITs on the cluster.
+
+<!-- vale off -->
+## create-transform
+<!-- vale on -->
+
+The `create-transform` operation creates an [index transform]({{site.url}}{{site.baseurl}}/im-plugin/index-transforms/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`transform-id` | Yes | String | The transform ID.
+`body` | Yes | Object | The transform definition.
+
+<!-- vale off -->
+## start-transform
+<!-- vale on -->
+
+The `start-transform` operation starts a previously created transform.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`transform-id` | Yes | String | The transform ID to start.
+
+<!-- vale off -->
+## wait-for-transform
+<!-- vale on -->
+
+The `wait-for-transform` operation polls the transform status until it completes.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`transform-id` | Yes | String | The transform ID to monitor.
+`timeout` | No | Number | Maximum time in seconds to wait for completion. Default is `300`.
+
+<!-- vale off -->
+## train-knn-model
+<!-- vale on -->
+
+The `train-knn-model` operation trains a k-NN model using the [Train Model API]({{site.url}}{{site.baseurl}}/search-plugins/knn/api/#train-a-model).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`body` | Yes | Object | The training request body including training index, field, and model parameters.
+`timeout` | No | Number | Maximum time in seconds to wait for training to complete. Default is `300`.
+
+<!-- vale off -->
+## delete-knn-model
+<!-- vale on -->
+
+The `delete-knn-model` operation deletes a trained k-NN model.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`model-id` | Yes | String | The model ID to delete.
+
+<!-- vale off -->
+## register-ml-model
+<!-- vale on -->
+
+The `register-ml-model` operation registers a machine learning model using the [ML Commons API]({{site.url}}{{site.baseurl}}/ml-commons-plugin/api/model-apis/register-model/).
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`body` | Yes | Object | The model registration request body.
+
+<!-- vale off -->
+## deploy-ml-model
+<!-- vale on -->
+
+The `deploy-ml-model` operation deploys (loads) a registered ML model.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`model-id` | Yes | String | The model ID to deploy. Can reference a model registered in a previous `register-ml-model` operation.
+`timeout` | No | Number | Maximum time in seconds to wait for deployment. Default is `300`.
+
+<!-- vale off -->
+## create-ml-connector
+<!-- vale on -->
+
+The `create-ml-connector` operation creates an [ML connector]({{site.url}}{{site.baseurl}}/ml-commons-plugin/remote-models/connectors/) for remote model integration.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`body` | Yes | Object | The connector definition.
+
+<!-- vale off -->
+## delete-ml-connector
+<!-- vale on -->
+
+The `delete-ml-connector` operation deletes an ML connector.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`connector-id` | Yes | String | The connector ID to delete.
+
+<!-- vale off -->
+## delete-ml-model
+<!-- vale on -->
+
+The `delete-ml-model` operation deletes a registered ML model.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`model-id` | Yes | String | The model ID to delete.
+
+<!-- vale off -->
+## raw-request
+<!-- vale on -->
+
+The `raw-request` operation sends an arbitrary HTTP request to OpenSearch. Use this for operations not covered by a dedicated operation type.
+
+### Usage
+
+```json
+{
+  "name": "check-shard-count",
+  "operation-type": "raw-request",
+  "method": "GET",
+  "path": "/_cat/shards?v",
+  "body": {}
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`method` | No | String | HTTP method (`GET`, `POST`, `PUT`, `DELETE`). Default is `GET`.
+`path` | Yes | String | The URL path (relative to the cluster root).
+`body` | No | Object | The request body.
+`request-params` | No | Object | Query string parameters.
+`headers` | No | Object | HTTP headers to include.
+
+<!-- vale off -->
+## sleep
+<!-- vale on -->
+
+The `sleep` operation pauses execution for a specified duration.
+
+### Usage
+
+```json
+{
+  "name": "wait-before-search",
+  "operation-type": "sleep",
+  "duration": 30
+}
+```
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`duration` | Yes | Number | Sleep duration in seconds.
+
+<!-- vale off -->
+## composite
+<!-- vale on -->
+
+The `composite` operation runs multiple operations sequentially within a single task. This is useful for operations that must execute as a unit, such as creating a PIT, searching with it, and deleting it.
+
+### Usage
+
+```json
+{
+  "name": "pit-search-workflow",
+  "operation-type": "composite",
+  "requests": [
+    { "operation-type": "create-point-in-time", "index": "my-index" },
+    { "operation-type": "search", "body": { "query": { "match_all": {} } } },
+    { "operation-type": "delete-point-in-time" }
+  ]
+}
+```
+
+<!-- vale off -->
+## produce-stream-message
+<!-- vale on -->
+
+The `produce-stream-message` operation produces messages to a Kafka topic for streaming ingestion benchmarks.
+
+### Configuration options
+
+Parameter | Required | Type | Description
+:--- | :--- | :--- | :---
+`body` | Yes | Object | The message body to produce.
+`topic` | No | String | The Kafka topic name. Derived from workload configuration if not specified.
+
+<!-- vale off -->
+## proto-bulk
+<!-- vale on -->
+
+The `proto-bulk` operation sends bulk index requests using the gRPC transport instead of HTTP REST. Requires gRPC to be enabled on the target cluster.
+
+### Configuration options
+
+Same as `bulk`, but uses gRPC serialization (Protocol Buffers) instead of JSON over HTTP. Use `--grpc-target-hosts` to specify the gRPC endpoint.
+
+<!-- vale off -->
+## proto-search
+<!-- vale on -->
+
+The `proto-search` operation sends search requests using gRPC transport.
+
+### Configuration options
+
+Same as `search`, but uses gRPC. Use `--grpc-target-hosts` to specify the gRPC endpoint.
+
+<!-- vale off -->
+## proto-vector-search
+<!-- vale on -->
+
+The `proto-vector-search` operation sends vector search requests using gRPC transport.
+
+### Configuration options
+
+Same as `vector-search`, but uses gRPC. Use `--grpc-target-hosts` to specify the gRPC endpoint.
