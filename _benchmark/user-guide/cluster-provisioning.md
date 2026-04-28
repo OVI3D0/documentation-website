@@ -72,17 +72,17 @@ opensearch-benchmark run --pipeline=from-distribution --distribution-version=2.1
 
 ### Cluster configuration
 
-The provisioned cluster uses default settings. To customize the cluster, use `--car` (cluster configuration profiles):
+The provisioned cluster uses default settings. To customize the cluster, use `--cluster-config` (cluster configuration profiles):
 
 ```bash
 opensearch-benchmark run \
   --pipeline=from-distribution \
   --distribution-version=2.19.1 \
   --workload=geonames \
-  --car="defaults,4gheap"
+  --cluster-config="defaults,4gheap"
 ```
 
-Available car profiles are listed in the cluster configurations repository. Common profiles include:
+Available cluster configuration profiles are listed in the cluster configurations repository. Common profiles include:
 - `defaults`: Default OpenSearch settings
 - `4gheap`: Sets JVM heap to 4 GB
 - `16gheap`: Sets JVM heap to 16 GB
