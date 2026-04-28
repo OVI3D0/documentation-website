@@ -67,7 +67,7 @@ opensearch-benchmark run --workload=geonames --workload-params="number_of_shards
 ```
 
 {: .note}
-The comma-separated format only supports string values. Use JSON file or inline JSON for numbers, booleans, or nested objects.
+The comma-separated format automatically converts values to numbers and booleans where possible (e.g., `number_of_shards:3` becomes integer `3`). Use JSON file or inline JSON for nested objects.
 
 ## Parameter precedence
 
@@ -75,7 +75,7 @@ When the same parameter is defined in multiple places, OpenSearch Benchmark appl
 
 1. **`--workload-params`** (CLI flag) --- overrides everything
 2. **Workload defaults** --- `{% raw %}{{ var | default(value) }}{% endraw %}` in the workload files
-3. **Undefined** --- if no default is set and the parameter isn't provided, Benchmark raises a template rendering error
+3. **Undefined** --- if no default is set and the parameter isn't provided, it renders as an empty string which may cause JSON parsing errors downstream
 
 ## Template syntax
 

@@ -52,7 +52,7 @@ opensearch-benchmark run \
 OpenSearch Benchmark downloads the distribution to `~/.benchmark/benchmarks/distributions/` and caches it for future runs. The cluster starts on a random port (shown in the output) and is automatically stopped when the benchmark completes.
 
 **Requirements:**
-- Java Development Kit (JDK) installed. OpenSearch Benchmark searches for JDK versions 17, 16, 15, 14, 13, 12, 11, or 8 using environment variables like `JAVA17_HOME` or `JAVA_HOME`.
+- Java Development Kit (JDK) installed. OpenSearch Benchmark searches for JDK versions 21, 17, 16, 15, 14, 13, 12, 11, or 8 using environment variables like `JAVA17_HOME` or `JAVA_HOME`.
 - Sufficient disk space for the OpenSearch distribution (~500MB) and benchmark data.
 
 ### from-sources
@@ -78,6 +78,9 @@ opensearch-benchmark run \
 - The OpenSearch source repository (configured in `benchmark.ini` under `[source]`)
 
 ### docker
+
+{: .note}
+The `docker` pipeline is experimental and does not appear in `opensearch-benchmark list pipelines` output.
 
 Uses Docker to provision an OpenSearch cluster for benchmarking.
 

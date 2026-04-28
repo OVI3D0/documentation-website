@@ -61,7 +61,7 @@ This downloads the OpenSearch tarball, extracts it, starts a single-node cluster
 
 ### JDK requirements
 
-The `from-distribution` pipeline requires a JDK. OpenSearch Benchmark searches for JDK installations using environment variables in this order: `JAVA17_HOME`, `JAVA16_HOME`, `JAVA15_HOME`, ..., `JAVA_HOME`.
+The `from-distribution` pipeline requires a JDK. OpenSearch Benchmark searches for JDK installations using environment variables in this order: `JAVA21_HOME`, `JAVA17_HOME`, `JAVA16_HOME`, `JAVA15_HOME`, ..., `JAVA_HOME`.
 
 If you have JDK 17 installed but OpenSearch Benchmark can't find it:
 

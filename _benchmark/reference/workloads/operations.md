@@ -363,6 +363,7 @@ Parameter | Required | Type | Description
 `index` | No | String | The index or indexes to force merge. Default is `_all`.
 `request-params` | No | Object | Request parameters passed to the Force Merge API, such as `max_num_segments`.
 `mode` | No | String | Set to `polling` to wait asynchronously for the merge to complete.
+`poll-period` | No | Duration | Time between polling checks when `mode` is `polling`.
 
 This is an administrative operation. Metrics are not reported by default. Reporting can be forced by setting `include-in-reporting` to `true`.
 
@@ -725,7 +726,7 @@ Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `source-index` | Yes | String | The source index to shrink.
 `target-index` | Yes | String | The name for the shrunk index.
-`target-body` | No | Object | Settings and mappings for the target index.
+`target-body` | Yes | Object | Settings and mappings for the target index.
 `request-params` | No | Object | Additional request parameters.
 
 <!-- vale off -->
@@ -1087,33 +1088,33 @@ The `produce-stream-message` operation produces messages to a Kafka topic for st
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `body` | Yes | Object | The message body to produce.
-`topic` | No | String | The Kafka topic name. Derived from workload configuration if not specified.
+`message-producer` | Yes | Object | The message producer configuration.
 
 <!-- vale off -->
-## proto-bulk
+## proto-bulk-index
 <!-- vale on -->
 
-The `proto-bulk` operation sends bulk index requests using the gRPC transport instead of HTTP REST. Requires gRPC to be enabled on the target cluster.
+The `proto-bulk-index` operation sends bulk index requests using the gRPC transport instead of HTTP REST. Requires gRPC to be enabled on the target cluster.
 
 ### Configuration options
 
 Same as `bulk`, but uses gRPC serialization (Protocol Buffers) instead of JSON over HTTP. Use `--grpc-target-hosts` to specify the gRPC endpoint.
 
 <!-- vale off -->
-## proto-search
+## proto-query
 <!-- vale on -->
 
-The `proto-search` operation sends search requests using gRPC transport.
+The `proto-query` operation sends search requests using gRPC transport.
 
 ### Configuration options
 
 Same as `search`, but uses gRPC. Use `--grpc-target-hosts` to specify the gRPC endpoint.
 
 <!-- vale off -->
-## proto-vector-search
+## proto-knn-query
 <!-- vale on -->
 
-The `proto-vector-search` operation sends vector search requests using gRPC transport.
+The `proto-knn-query` operation sends vector search requests using gRPC transport.
 
 ### Configuration options
 
