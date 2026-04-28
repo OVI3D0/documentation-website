@@ -149,7 +149,7 @@ Parameter | Required | Type | Description
 
 The `create-index` operation returns the following metadata:
 
-`weight`: The number of indexes created by the operation.
+`weight`: The number of indexes affected by the operation.
 `unit`: Always `ops`, indicating the number of operations inside the workload.
 `success`: A Boolean indicating whether the operation has succeeded.
 
@@ -192,7 +192,7 @@ Use the following options when deleting all indexes indicated in the `indices` s
 
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
-`only-if-exists` | No | Boolean | Decides whether an existing index should be deleted. Default is `true`.
+`only-if-exists` | No | Boolean | Decides whether an index should only be deleted if it exists. Default is `false`.
 `request-params` | No | List of settings | Contains any request parameters allowed by the Create Index API. OpenSearch Benchmark does not attempt to serialize the parameters and passes them in their current state.
 
 Use the following options if you want to delete one or more indexes based on the pattern indicated in the `index` option.
@@ -200,14 +200,14 @@ Use the following options if you want to delete one or more indexes based on the
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `index` | Yes | String | The index or indexes that you want to delete.
-`only-if-exists` | No | Boolean | Decides whether an index should be deleted when the index exists. Default is `true`.
+`only-if-exists` | No | Boolean | Decides whether an index should only be deleted if it exists. Default is `false`.
 `request-params` | No | List of settings | Contains any request parameters allowed by the Create Index API. OpenSearch Benchmark does not attempt to serialize the parameters and passes them in their current state.
 
 ### Metadata
 
 The `delete-index` operation returns the following metadata:
 
-`weight`: The number of indexes created by the operation.
+`weight`: The number of indexes affected by the operation.
 `unit`: Always `ops`, for the number of operations inside the workload.
 `success`: A Boolean indicating whether the operation has succeeded.
 
@@ -242,7 +242,7 @@ Use the following options with the `cluster-health` operation.
 
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
-`index` | Yes | String | The index or indexes you want to assess.
+`index` | No | String | The index or indexes you want to assess.
 `request-params` | No | List of settings | Contains any request parameters allowed by the Cluster Health API. OpenSearch Benchmark does not attempt to serialize the parameters and passes them in their current state.
 
 ### Metadata
@@ -361,7 +361,8 @@ The `force-merge` operation runs the [Force Merge API]({{site.url}}{{site.baseur
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `index` | No | String | The index or indexes to force merge. Default is `_all`.
-`request-params` | No | Object | Request parameters passed to the Force Merge API, such as `max_num_segments`.
+`max-num-segments` | No | Integer | Maximum number of segments to merge to.
+`request-params` | No | Object | Additional request parameters passed to the Force Merge API.
 `mode` | No | String | Set to `polling` to wait asynchronously for the merge to complete.
 `poll-period` | No | Duration | Time between polling checks when `mode` is `polling`.
 
@@ -486,10 +487,10 @@ Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `bulk-size` | No | Integer | Number of documents per bulk request.
 `index` | No | String | The target index.
-`retries` | No | Integer | Number of retry attempts on failure. Default is `3`.
+`retries` | No | Integer | Number of additional retry attempts on failure. Default is `0` (single attempt).
 `retry-wait-period` | No | Number | Initial wait period between retries in seconds. Default is `0.5`.
 `retry-max-wait-period` | No | Number | Maximum wait period between retries in seconds (exponential backoff capped at this value). Default is `60`.
-`detailed-results` | No | Boolean | Records detailed per-document success/failure metadata.
+`detailed-results` | No | Boolean | Records detailed per-document success/failure metadata. Default is `true`.
 
 <!-- vale off -->
 ## put-pipeline
@@ -768,7 +769,7 @@ Parameter | Required | Type | Description
 `repository` | Yes | String | The repository name.
 `snapshot` | Yes | String | The snapshot name.
 `body` | No | Object | The snapshot definition.
-`wait-for-completion` | No | Boolean | Whether to wait for the snapshot to complete. Default is `true`.
+`wait-for-completion` | No | Boolean | Whether to wait for the snapshot to complete. Default is `false`.
 `request-params` | No | Object | Additional request parameters.
 
 <!-- vale off -->
@@ -809,7 +810,7 @@ The `wait-for-recovery` operation waits until index recovery completes by pollin
 
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
-`index` | No | String | The index to monitor recovery for. Default is `_all`.
+`index` | Yes | String | The index to monitor recovery for.
 `request-params` | No | Object | Additional request parameters.
 `retry-until-success` | No | Boolean | Whether to keep retrying until recovery completes. Default is `false`.
 
@@ -850,7 +851,7 @@ The `delete-async-search` operation deletes an async search result.
 
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
-`retrieve-results-for` | Yes | String | The name of the `submit-async-search` operation whose results to delete.
+`delete-results-for` | Yes | String | The name of the `submit-async-search` operation whose results to delete.
 
 <!-- vale off -->
 ## create-point-in-time
@@ -875,7 +876,7 @@ The `delete-point-in-time` operation deletes a PIT.
 
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
-`pit-id` | No | String | The PIT ID to delete. If not specified, uses the ID from the most recent `create-point-in-time` operation.
+`with-point-in-time-from` | No | String | The name of a prior `create-point-in-time` operation whose PIT ID to delete.
 
 <!-- vale off -->
 ## list-all-point-in-time
@@ -919,7 +920,7 @@ The `wait-for-transform` operation polls the transform status until it completes
 Parameter | Required | Type | Description
 :--- | :--- | :--- | :---
 `transform-id` | Yes | String | The transform ID to monitor.
-`timeout` | No | Number | Maximum time in seconds to wait for completion. Default is `300`.
+`transform-timeout` | No | Number | Maximum time in seconds to wait for completion. Default is `3600`.
 
 <!-- vale off -->
 ## train-knn-model
