@@ -643,7 +643,7 @@ Parameter | Required | Type | Description
 ## create-component-template
 <!-- vale on -->
 
-The `create-component-template` operation creates a [component template]({{site.url}}{{site.baseurl}}/im-plugin/index-templates/#component-templates).
+The `create-component-template` operation creates a [component template]({{site.url}}{{site.baseurl}}/im-plugin/index-templates/).
 
 ### Configuration options
 
@@ -802,7 +802,7 @@ Parameter | Required | Type | Description
 ## wait-for-recovery
 <!-- vale on -->
 
-The `wait-for-recovery` operation waits until index recovery completes by polling the [Index Recovery API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/recovery/).
+The `wait-for-recovery` operation waits until index recovery completes by polling the [Index Recovery API]({{site.url}}{{site.baseurl}}/api-reference/index-apis/recover/).
 
 ### Configuration options
 
@@ -816,7 +816,7 @@ Parameter | Required | Type | Description
 ## submit-async-search
 <!-- vale on -->
 
-The `submit-async-search` operation submits an [asynchronous search]({{site.url}}{{site.baseurl}}/search-plugins/async-search/) request.
+The `submit-async-search` operation submits an [asynchronous search]({{site.url}}{{site.baseurl}}/search-plugins/async/) request.
 
 ### Configuration options
 
@@ -924,7 +924,7 @@ Parameter | Required | Type | Description
 ## train-knn-model
 <!-- vale on -->
 
-The `train-knn-model` operation trains a k-NN model using the [Train Model API]({{site.url}}{{site.baseurl}}/search-plugins/knn/api/#train-a-model).
+The `train-knn-model` operation trains a k-NN model using the [Train Model API]({{site.url}}{{site.baseurl}}/vector-search/api/knn/).
 
 ### Configuration options
 
